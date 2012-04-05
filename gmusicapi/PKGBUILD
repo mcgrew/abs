@@ -1,0 +1,25 @@
+# Maintainer: Thomas McGrew
+
+pkgname=python2-gmusicapi
+pkgver=2012.04.01
+pkgrel=1
+pkgdesc="An unofficial api for Google Music."
+arch=('i686' 'x86_64')
+license=('BSD')
+url="https://github.com/simon-weber/Unofficial-Google-Music-API"
+depends=(python2)
+source=(gmusicapi-$pkgver.tar.gz::https://github.com/simon-weber/Unofficial-Google-Music-API/tarball/$pkgver)
+sha1sums=('8065936f1bccfd6db327e3c367b384790c7363d2')
+
+build() {
+	cd $srcdir/simon-weber-Unofficial-Google-Music-API-f67e843/
+	rm -rf gmusicapi/test
+	python2 -c 'import compileall; compileall.compile_dir("gmusicapi", force=1)'
+}
+
+package() {
+	mkdir -p $pkgdir/usr/lib/python2.7/site-packages
+	cp -r $srcdir/simon-weber-Unofficial-Google-Music-API-f67e843/gmusicapi \
+	      $pkgdir/usr/lib/python2.7/site-packages
+}
+
