@@ -1,0 +1,16 @@
+pkgname=ttf-roboto
+pkgver=20111129
+pkgrel=1
+pkgdesc="Google's Roboto font"
+arch=('any')
+url="http://developer.android.com/design/style/typography.html"
+license=("Artistic-2.0")
+source=(http://developer.android.com/design/static/download/Roboto_Hinted_$pkgver.zip)
+md5sums=('8ab85eb3119595a137162a735e1f4955')
+options=('!libtool' '!emptydirs')
+
+build() {
+ mkdir -p ${startdir}/pkg/usr/share/fonts/TTF
+ cp ${startdir}/src/Roboto_Hinted_${pkgver}/*.ttf ${startdir}/pkg/usr/share/fonts/TTF/
+
+}

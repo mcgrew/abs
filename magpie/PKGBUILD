@@ -1,0 +1,23 @@
+# Maintainer: Thomas McGrew
+
+pkgname=magpie
+pkgver=0.1.1.2012.03.27
+pkgrel=1
+pkgdesc="Manage And Generate Passwords Incredibly Easily. Magpie is a command line password manager."
+arch=('any')
+license=('GPL')
+url="http://github.com/mcgrew/magpie"
+depends=('python2')
+makedepends=()
+optdepends=('xsel' 'xclip')
+options=()
+source=("https://github.com/mcgrew/magpie/raw/1682f122b4c08e8fbc616f6f56b69610c96a7f98/magpie.py")
+sha1sums=('c68be4e1c65ad17e6db74ef938a4134625023c28')
+
+package() {
+  mkdir -p ${pkgdir}/usr/bin
+	# change the shell line to python2
+	echo "#!/usr/bin/env python2" > $pkgdir/usr/bin/magpie
+	tail -n +2 $srcdir/magpie.py >> $pkgdir/usr/bin/magpie
+	chmod +x $pkgdir/usr/bin/magpie
+}

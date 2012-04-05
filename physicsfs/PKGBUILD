@@ -1,0 +1,21 @@
+#ontributor: Thomas McGrew
+pkgname=physfs
+pkgver=2.0.2
+pkgrel=1
+pkgdesc="PhysicsFS is a library to provide abstract access to various archives. It is intended for use in video games, and the design was somewhat inspired by Quake 3's file subsystem."
+url="http://icculus.org/physfs/"
+depends=()
+conflicts=()
+backup=()
+license=('ZLIB')
+arch=( 'i686' 'x86_64' )
+source=(http://icculus.org/physfs/downloads/$pkgname-$pkgver.tar.gz $pkgname-$pkgver.patch)
+md5sums=('4e8927c3d30279b03e2592106eb9184a' 'd9eecaa7495aa278854b9eeeee627f27')
+
+build() {
+  cd $startdir/src/$pkgname-$pkgver/
+	patch -p1 < ../$pkgname-$pkgver.patch
+	cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr . 
+  make || return 1
+  make DESTDIR=$startdir/pkg install
+}

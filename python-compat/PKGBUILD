@@ -1,0 +1,27 @@
+# Maintainer: Thomas McGrew
+
+pkgname=python-compat
+pkgver=0.1
+pkgrel=1
+pkgdesc="Compatibility for older versions of python applications. Makes Python2 the default"
+arch=('i686' 'x86_64')
+license=('X11')
+url=""
+depends=()
+makedepends=()
+optdepends=()
+provides=('python')
+replaces=('python')
+conflicts=('python')
+options=()
+source=()
+sha1sums=()
+
+package() {
+  mkdir -p                     "${pkgdir}/usr/bin"
+  ln -sf python2               "${pkgdir}/usr/bin/python"
+  ln -sf python2-config        "${pkgdir}/usr/bin/python-config"
+  ln -sf idle2                 "${pkgdir}/usr/bin/idle"
+  ln -sf pydoc2                "${pkgdir}/usr/bin/pydoc"
+
+}

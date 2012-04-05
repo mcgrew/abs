@@ -1,0 +1,24 @@
+#ontributor: Thomas McGrew
+pkgname=love
+pkgver=0.7.99
+pkgrel=1
+pkgdesc="A framework for making 2D games in the Lua programming language - latest hg pull"
+url="https://love2d.org/"
+depends=('devil' 'physfs' 'libmodplug')
+makedepends=('mercurial')
+conflicts=()
+replaces=('love')
+backup=()
+license=('ZLIB')
+arch=( 'i686' 'x86_64' )
+source=()
+md5sums=()
+
+build() {
+	hg clone https://bitbucket.org/rude/love .
+  cd $startdir/src/
+	platform/unix/automagic
+  ./configure --prefix=/usr
+  make || return 1
+  make DESTDIR=$startdir/pkg install
+}

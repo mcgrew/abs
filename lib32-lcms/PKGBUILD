@@ -1,0 +1,18 @@
+# Contributor: Max Pray a.k.a. Synthead <synthead@gmail.com>
+
+pkgname=lib32-lcms
+pkgname32=${pkgname/lib32-/}
+pkgver=1.18
+pkgrel=3
+pkgrel32=3
+pkgdesc="Lightweight color management development library/engine"
+arch=(x86_64)
+url="http://www.littlecms.com/"
+license=('GPL')
+source=(ftp://ftp.archlinux.org/extra/os/i686/${pkgname32}-${pkgver}-${pkgrel32}-i686.pkg.tar.gz)
+md5sums=('912e28e7af7d980cb88ba87a394ff2dd')
+
+build() {
+  mkdir -p $startdir/pkg/opt/lib32/usr/
+  cp -rPf $startdir/src/usr/lib $startdir/pkg/opt/lib32/usr/lib
+}
