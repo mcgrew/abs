@@ -1,20 +1,21 @@
 pkgname=r-biobase
-pkgver=2.12.1
+pkgver=2.16.0
 pkgrel=1
 pkgdesc="Biobase Library for the GNU R language"
-bioconductor_ver=2.8
+bioconductor_ver=2.10
 arch=('i686' 'x86_64')
 url="http://www.bioconductor.org/"
 license=("Artistic-2.0")
-depends=('r')
+depends=('r' 'r-biocgenerics')
+makedepends=('r-biocgenerics')
 source=(http://www.bioconductor.org/packages/${bioconductor_ver}/bioc/src/contrib/Biobase_${pkgver}.tar.gz)
-md5sums=('893dc8abd60e3cebae58a000ffb15288')
+md5sums=('4cc0954465763fe16348f6b501626f46')
 options=('!libtool' '!emptydirs')
 
 build() {
- cd ${startdir}/src
- mkdir -p ../pkg/usr/lib/R/library
- R CMD INSTALL Biobase -l ../pkg/usr/lib/R/library
- rm ${startdir}/pkg/usr/lib/R/library/R.css
+ cd ${srcdir}
+ mkdir -p $pkgdir/usr/lib/R/library
+ R CMD INSTALL Biobase --no-libs -l $pkgdir/usr/lib/R/library
+ rm ${pkgdir}/usr/lib/R/library/R.css
 
 }

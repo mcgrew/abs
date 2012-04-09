@@ -5,8 +5,9 @@ pkgdesc="Google's Roboto font"
 arch=('any')
 url="http://developer.android.com/design/style/typography.html"
 license=("Artistic-2.0")
-source=(http://developer.android.com/design/static/download/Roboto_Hinted_$pkgver.zip)
-md5sums=('8ab85eb3119595a137162a735e1f4955')
+source=(http://dl.google.com/android/design/Roboto_Hinted_$pkgver.zip)
+#md5sums=('8ab85eb3119595a137162a735e1f4955')
+md5sums=('043b0393a3f5f3571d147fd68c62390d')
 options=('!libtool' '!emptydirs')
 
 build() {
