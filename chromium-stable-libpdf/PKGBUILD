@@ -1,0 +1,31 @@
+# Contributor: sxe <sxxe@gmx.de> 
+pkgname=chromium-stable-libpdf
+pkgver=18.0.1025.162
+pkgrel=1
+pkgdesc="Build in PDF viewer (libpdf plugin) for Chromium stable version"
+url="http://wiki.archlinux.org/index.php/Chromium#libpdf.so"
+arch=("i686" "x86_64")
+license="non-free"
+depends=('chromium')
+
+# Get correct version for CARCH
+    if [ $CARCH = "i686" ]; then
+        libpdf_arch="i386"
+	md5sums=('62ceb62342393e3aa79f8c5c4aed5373')
+    else 
+        if [ $CARCH = "x86_64" ]; then
+            libpdf_arch="amd64"
+	    md5sums=('436532e39598f0877653148da6431863')
+        fi
+    fi
+source=(https://dl-ssl.google.com/linux/direct/google-chrome-stable_current_${libpdf_arch}.deb) 
+
+build() {
+    cd ${srcdir}
+    ar xv google-chrome-stable_current_${libpdf_arch}.deb
+    lzma -df data.tar.lzma
+    tar xvf data.tar ./opt/google/chrome/libpdf.so
+
+    install -Dm 755 ./opt/google/chrome/libpdf.so \
+			${pkgdir}/usr/lib/chromium/libpdf.so
+}

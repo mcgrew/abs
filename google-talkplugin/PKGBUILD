@@ -1,0 +1,32 @@
+# Maintainer: Dominik Mayer <dominik.mayer@gmail.com>
+pkgname=google-talkplugin
+pkgver=2.8.5.0
+pkgrel=1
+pkgdesc="Video chat browser plug-in for Google Talk"
+arch=('i686' 'x86_64')
+url="http://www.google.com/chat/video"
+license=('unknown')
+depends=('gtk2>=2.12.0' 'libpng12>=1.2.13' 'libgl' 'libxt')
+optdepends=('libnotify' 'pulseaudio')
+
+if [ "${CARCH}" = 'x86_64' ]; then
+    ARCH='amd64'
+    md5sums=('351a558d4addbb79328f2d7409e1b040')
+else
+    ARCH='i386'
+    md5sums=('df40c65d2ffd1ec3878a54ff32b432b1')
+fi
+
+source=(google-talkplugin-$pkgver-$ARCH.deb::http://dl.google.com/linux/direct/google-talkplugin_current_$ARCH.deb)
+
+build() {
+    msg "Extracting..."
+    ar -xv google-talkplugin-$pkgver-$ARCH.deb || return 1
+    tar -xvf data.tar.gz || return 1
+    msg2 "Done extracting!"
+    msg "Moving files"
+    mv $srcdir/opt $pkgdir
+    mv $srcdir/usr $pkgdir
+    msg2 "Done moving files"
+
+}
