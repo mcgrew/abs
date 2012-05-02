@@ -7,13 +7,14 @@ pkgbase=linux
 pkgname=linux-ralus       # Build kernel with a different name
 _kernelname=${pkgname#linux}
 _basekernel=3.3
-pkgver=${_basekernel}.2
+pkgver=${_basekernel}.4
 pkgrel=1
 arch=('i686' 'x86_64')
 url="http://www.kernel.org/"
 license=('GPL2')
 makedepends=('xmlto' 'docbook-xsl')
 options=('!strip')
+depends=('linux>=3.3' 'linux<3.4')
 source=("http://www.kernel.org/pub/linux/kernel/v3.x/linux-3.3.tar.xz"
         "http://www.kernel.org/pub/linux/kernel/v3.x/patch-${pkgver}.xz"
         # the main kernel config files
@@ -23,17 +24,17 @@ source=("http://www.kernel.org/pub/linux/kernel/v3.x/linux-3.3.tar.xz"
         'fix-acerhdf-1810T-bios.patch'
         'change-default-console-loglevel.patch'
         'i915-fix-ghost-tv-output.patch'
-				'linux-ralus.patch'
+				"linux-$pkgver-ralus.patch"
         'ext4-options.patch')
 md5sums=('7133f5a2086a7d7ef97abac610c094f5'
-         '68907107b0f62a19608588bdb6b29e20'
-         '611384eca31001757d23a689f47fa318'
-         '81d48b91797c895fff5a36c17eae6320'
+         '9c4cc16f10b645fbb90f6c05ad388883'
+         'a69f3228ec513be819e20f0e6625fef6'
+         '744c93715cbf8dfd31db5f7b216b954c'
          'eb14dcfd80c00852ef81ded6e826826a'
          '38c1fd4a1f303f1f6c38e7f082727e2f'
          '9d3c56a4b999c8bfbd4018089a62f662'
          '263725f20c0b9eb9c353040792d644e5'
-         '2836cdb33237e3a7a29aa5c45e9a9c07'
+         '681c1edf6959edbe533cf7437c8283c3'
          'bb7fd1aa23016c8057046b84fd4eb528')
 
 build() {
@@ -69,7 +70,7 @@ build() {
   patch -Np1 -i "${srcdir}/ext4-options.patch"
 
 	# patch for compatibility with Symantec Remote Backup Agent
-  patch -Np1 -i "${srcdir}/linux-ralus.patch"
+  patch -Np1 -i "${srcdir}/linux-$pkgver-ralus.patch"
 
   if [ "${CARCH}" = "x86_64" ]; then
     cat "${srcdir}/config.x86_64" > ./.config
