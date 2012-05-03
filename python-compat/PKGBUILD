@@ -1,7 +1,7 @@
 # Maintainer: Thomas McGrew
 
 pkgname=python-compat
-pkgver=0.1
+pkgver=3.99
 pkgrel=1
 pkgdesc="Compatibility for older versions of python applications. Makes Python2 the default"
 arch=('i686' 'x86_64')
@@ -11,7 +11,6 @@ depends=()
 makedepends=()
 optdepends=()
 provides=('python')
-replaces=('python')
 conflicts=('python')
 options=()
 source=()

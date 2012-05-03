@@ -1,25 +1,35 @@
-# Maintainer: Alexander Rødseth <rodseth@gmail.com>
-# Contributor: Carson Reynolds <carson@k2.t.u-tokyo.ac.jp>
-# Contributor: Mikhail Vorozhtsov <mikhail.vorozhtsov@gmail.com>
 
-pkgname=gcc44
-pkgver=4.4.6
+# NOTE: libtool requires rebuilt with each new gcc version
+
+pkgname=gcc45
+_ver=4.5
+pkgver=4.5.3
 pkgrel=1
-pkgdesc="The GNU Compiler Collection (4.4.x)"
+pkgdesc="The GNU Compiler Collection (4.5.x)"
 arch=('i686' 'x86_64')
 url="http://gcc.gnu.org/"
 license=('GPL' 'LGPL' 'custom')
 depends=('binutils>=2.20.1' 'mpfr>=2.4.2-2' 'cloog' 'zlib' 'libelf')
 options=('!libtool')
+conflicts=('gcc41' 'gcc42' 'gcc43' 'gcc44')
 source=("http://www.mirrorservice.org/sites/sourceware.org/pub/gcc/releases/gcc-$pkgver/gcc-$pkgver.tar.bz2"
         "gcc-hash-style-both.patch"
         "gcc_pure64.patch")
-sha256sums=('57c718899e19277cbce9df3b0940a319e63c4630df6134185a45f157f24e8a0b'
+sha256sums=('0a8847af44a9b33813b199997a73139517c96adfd519eaf24c79d4d9d09f65de'
             'a600550d3d2b2fb8ee6a547c68c3a08a2af7579290b340c35ee5598c9bb305a5'
             '2d369cf93c6e15c3559c3560bce581e0ae5f1f34dc86bca013ac67ef1c1a9ff9')
 
 build() {
   cd "$srcdir/gcc-$pkgver"
+
+  # ============================= TEST SUITE ============================= #
+  #aria2c -k1M -V testsuite.metalink
+  #tar xf gcc-testsuite.tar.bz2
+  # ============================= TEST SUITE ============================= #
+
+
+  #"Add" ppl-0.11 compatibility
+  #sed -i "/ppl_minor_version=/s#10#11#" configure
 
   # Do not install libiberty
   sed -i -e 's/install_to_$(INSTALL_DEST) //' libiberty/Makefile.in
@@ -39,7 +49,7 @@ build() {
     --infodir=/usr/share/info \
     --libdir=/usr/lib \
     --libexecdir=/usr/lib \
-    --program-suffix=-4.4 \
+    --program-suffix=-4.5 \
     --enable-shared \
     --enable-languages=c,c++,fortran,objc,obj-c++ \
     --enable-__cxa_atexit \
@@ -48,12 +58,27 @@ build() {
     --disable-libgomp \
     --disable-libmudflap \
     --disable-libssp \
-    --enable-clocale=gnu \
+      --enable-clocale=gnu \
     --with-tune=generic \
     --with-cloog \
-    --with-ppl \
+      --with-ppl \
     --with-system-zlib
   make
+
+  # ====================================================================== #
+  # ============================= TEST SUITE ============================= #
+
+  # increase stack size to prevent test failures
+  # http://gcc.gnu.org/bugzilla/show_bug.cgi?id=31827
+  # do not abort on error as some are "expected"
+
+  #cd ${srcdir}
+  #ulimit -s 32768
+  #make -k -j3 check || true
+  #${_basedir}/contrib/test_summary
+
+  # ============================= TEST SUITE ============================= #
+  # ====================================================================== #
 }
 
 package() {
@@ -61,7 +86,7 @@ package() {
 
   make DESTDIR="$pkgdir" install
   for f in "$pkgdir"/usr/share/info/*.info; do
-    n=`basename "$f" | sed -e 's/\.info/-4.4.info/'`
+    n=`basename "$f" | sed -e 's/\.info/-4.5.info/'`
     mv -f "$f" "$pkgdir/usr/share/info/$n"
   done
   rm -rf "$pkgdir/usr/share/man/man7"
@@ -71,10 +96,9 @@ package() {
   # Install Runtime Library Exception
   install -Dm644 ../COPYING.RUNTIME \
     "$pkgdir/usr/share/licenses/$pkgname/RUNTIME.LIBRARY.EXCEPTION" \
-  # Create links for gcc-4.4 build environment (useful for CUDA)
-  mkdir -p "$pkgdir/opt/gcc-4.4"
-  ln -s /usr/bin/gcc-4.4 "$pkgdir/opt/gcc-4.4/gcc"
-  ln -s /usr/bin/g++-4.4 "$pkgdir/opt/gcc-4.4/g++"
+  # Create links for gcc-4.5 build environment (useful for CUDA)
+  mkdir -p "$pkgdir/opt/gcc-4.5"
+  ln -s /usr/bin/gcc-4.5 "$pkgdir/opt/gcc-4.5/gcc"
+  ln -s /usr/bin/g++-4.5 "$pkgdir/opt/gcc-4.5/g++"
 }
 
-# vim:set ts=2 sw=2 et:

@@ -8,13 +8,13 @@ pkgname=linux-ralus       # Build kernel with a different name
 _kernelname=${pkgname#linux}
 _basekernel=3.3
 pkgver=${_basekernel}.4
-pkgrel=1
+pkgrel=2
 arch=('i686' 'x86_64')
 url="http://www.kernel.org/"
 license=('GPL2')
 makedepends=('xmlto' 'docbook-xsl')
 options=('!strip')
-depends=('linux>=3.3' 'linux<3.4')
+depends=("linux=$pkgver")
 source=("http://www.kernel.org/pub/linux/kernel/v3.x/linux-3.3.tar.xz"
         "http://www.kernel.org/pub/linux/kernel/v3.x/patch-${pkgver}.xz"
         # the main kernel config files
@@ -112,7 +112,7 @@ build() {
 package_linux-ralus() {
   pkgdesc="The Linux Kernel and modules"
   groups=('base')
-  depends=('coreutils' 'linux-firmware' 'module-init-tools>=3.16' 'mkinitcpio>=0.7')
+  depends=('coreutils' 'linux-firmware' 'kmod' 'mkinitcpio>=0.7')
   optdepends=('crda: to set the correct wireless channels of your country')
 #  provides=('kernel26')
 #  conflicts=('kernel26')
