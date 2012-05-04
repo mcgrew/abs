@@ -9,8 +9,8 @@
 # build time.
 
 pkgname=chromium
-pkgver=18.0.1025.162
-pkgrel=2
+pkgver=18.0.1025.168
+pkgrel=3
 pkgdesc="The open-source project behind Google Chrome, an attempt at creating a safer, faster, and more stable browser"
 arch=('i686' 'x86_64')
 url="http://www.chromium.org/"
@@ -23,7 +23,7 @@ depends=('gtk2' 'dbus-glib' 'nss' 'alsa-lib' 'xdg-utils' 'bzip2' 'libevent'
 # Mirror snapshop before GCC 4.7 moved to [core]:
 # Server = http://arm.konnichi.com/2012/04/02/$repo/os/$arch
 makedepends=('python2' 'perl' 'gperf' 'yasm' 'mesa' 'libgnome-keyring'
-             'elfutils') #'gcc<4.7')
+             'elfutils' 'gcc46')
 optdepends=('kdebase-kdialog: needed for file dialogs in KDE')
 # Needed for the NaCl toolchain
 [[ $CARCH == x86_64 ]] && makedepends+=('lib32-zlib')
@@ -31,27 +31,23 @@ provides=('chromium-browser')
 conflicts=('chromium-browser')
 install=chromium.install
 source=(http://commondatastorage.googleapis.com/chromium-browser-official/$pkgname-$pkgver.tar.bz2
-        nacl_sdk-$pkgver.zip::http://commondatastorage.googleapis.com/nativeclient-mirror/nacl/nacl_sdk/nacl_sdk.zip
+        naclsdk_linux-$pkgver.tar.bz2::http://commondatastorage.googleapis.com/nativeclient-mirror/nacl/nacl_sdk/$pkgver/naclsdk_linux.bz2
         chromium.desktop
         chromium.sh
-        chromium-gcc47.patch
         chromium-media-no-sse-r0.patch
         'chromium-alsa-fix.patch::http://src.chromium.org/viewvc/chrome/trunk/src/media/audio/linux/alsa_output.cc?view=patch&r1=109852&r2=109851&pathrev=109852'
+        chromium-missing-includes.patch
         chromium-revert-jpeg-swizzle-r2.patch)
-sha256sums=('c85875188c40c41225977eef58f3b04def16cae9877d32ced8e13a75207c73cd'
-            '8cf762587e547588b9461686f7d2655d5a23d09e1260b5f97137fa7d41c767a9'
+sha256sums=('1f1fc7bd8066835844a465f9d60c49c21173ff559c40e5d113fe9c4627fc18b9'
+            'f9c5bc8ef4e251769a0609cbca1692682140dc93364c2558aaade3c404f3d987'
             '09bfac44104f4ccda4c228053f689c947b3e97da9a4ab6fa34ce061ee83d0322'
             'c53bfc4db9dde684fbaed6a4bbecb207e3e7a0a2703233426fe076a6d3c557f3'
-            'f607347ba8477d3c8e60eb3803d26f3c9869f77fd49986c60887c59a6aa7d30d'
             '71751bf5913da1eec3c88c433044224c869b0abd5a29172cf239bddbb4eff761'
             '7bbaf52b8b85413ab28b1ef590f892eb27849652d74c5301b17b664e2d520c49'
+            'ad08cd1616f359e5808e62b32eba20189b7e66a0ee6f11ab9758d5becde775b0'
             'd99162aa6bae562f116a42347254bbec3752464f0a3e4d8675e2b287b2a838a2')
 
 build() {
-# build with gcc 4.4 for now
-#  export CC="gcc-4.4"
-#  export CCP="g++-4.4 -E"
-
   cd "$srcdir/chromium-$pkgver"
 
   # Fix build with gcc 4.7 (patch from openSUSE)
@@ -68,23 +64,22 @@ build() {
   patch -Np0 -i "$srcdir/chromium-revert-jpeg-swizzle-r2.patch"
 
   #fix a regression in html5 audio playback
-  patch --reverse -Np2 -i $srcdir/chromium-alsa-fix.patch
+  patch --reverse -p2 -i $srcdir/chromium-alsa-fix.patch
+
+  #add missing includes for newer gcc
+  patch -Np1 -i $srcdir/chromium-missing-includes.patch
 
   # Use Python 2
-  find . -type f -exec sed -i -r \
-    -e 's|/usr/bin/python$|&2|g' \
-    -e 's|(/usr/bin/python2)\.4$|\1|g' \
-    {} +
+#  find . -type f -exec sed -i -r \
+#    -e 's|/usr/bin/python$|&2|g' \
+#    -e 's|(/usr/bin/python2)\.4$|\1|g' \
+#    {} +
   # There are still a lot of relative calls which need a workaround
-  mkdir "$srcdir/python2-path"
-  ln -s /usr/bin/python2 "$srcdir/python2-path/python"
+  mkdir -p "$srcdir/python2-path"
+  ln -sf /usr/bin/python2 "$srcdir/python2-path/python"
   export PATH="$srcdir/python2-path:$PATH"
 
-  pushd "$srcdir/nacl_sdk"
-  ./naclsdk update pepper_18
-  popd
-
-  ln -s "$srcdir/nacl_sdk/pepper_18/toolchain/linux_x86_newlib" \
+  ln -sf "$srcdir/pepper_${pkgver%%.*}/toolchain/linux_x86_newlib" \
     native_client/toolchain/linux_x86_newlib
 
   # We need to disable system_ssl until "next protocol negotiation" support is
@@ -95,7 +90,6 @@ build() {
   export -n CFLAGS CXXFLAGS
 
   build/gyp_chromium -f make build/all.gyp --depth=. \
-    -Dno_strict_aliasing=1 \
     -Dwerror= \
     -Dlinux_sandbox_path=/usr/lib/chromium/chromium-sandbox \
     -Dlinux_strip_binary=1 \
