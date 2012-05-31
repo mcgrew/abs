@@ -1,0 +1,43 @@
+# Contributor Thomas McGrew
+
+pkgname=condor
+pkgver=7.8.0
+pkgrel=1
+pkgdesc="A high throughput computing grid framework"
+arch=('i686' 'x86_64')
+url="http://research.cs.wisc.edu/condor/"
+license=("Apache 2.0")
+depends=()
+makedepends=('cmake' 'make')
+source=(condor_src-$pkgver-all-all.tar.gz condor.install)
+md5sums=( 40fafefc41d518bd6e12b5d2305c0694 011fdcde16e982564fcea9bd39164b80)
+options=('!libtool' '!emptydirs')
+install=$pkgname.install
+_install_dir=usr
+
+build() {
+ cd $startdir/src/condor-$pkgver/
+ export CFLAGS="$CFLAGS -Wno-deprecated"
+ export CXXFLAGS="$CXXFLAGS -Wno-deprecated"
+ export LDFLAGS="${LDFLAGS//-Wl,--as-needed}"
+ export LDFLAGS="${LDFLAGS//,--as-needed}"
+ export LDFLAGS="${LDFLAGS//--as-needed}"
+ cmake -DWITH_GLOBUS:BOOL=OFF -DCMAKE_INSTALL_PREFIX:PATH=$pkgdir/$_install_dir
+ make
+ make install
+}
+
+package() {
+ cd $pkgdir
+ mv $_install_dir/etc etc
+ install -D etc/examples/condor_config etc/condor/condor_config
+ sed -i 's/\/usr\/local\/condor/\/usr/' etc/condor/condor_config
+ install -D etc/examples/condor_config.local var/lib/condor/condor_config.local
+ install -D $_install_dir/LICENSE-2.0.txt usr/share/licenses/LICENSE
+ install -D $srcdir/condor-$pkgver/src/condor_scripts/condor_compile $_install_dir/bin/condor_compile
+ install -D $srcdir/condor-$pkgver/src/condor_scripts/condor_gather_info $_install_dir/bin/condor_gather_info
+ install -D $srcdir/condor-$pkgver/src/condor_scripts/condor_glidein $_install_dir/bin/condor_glidein
+ install -D $srcdir/condor-$pkgver/src/condor_scripts/condor_run $_install_dir/bin/condor_run
+ mv etc/init.d etc/rc.d
+ rm -rf etc/examples $_install_dir/DOC usr/src
+}

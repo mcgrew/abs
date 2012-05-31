@@ -1,0 +1,88 @@
+# This is a default template for a post-install scriptlet.
+# Uncomment only required functions and remove any functions
+# you don't need (and this header).
+
+CONDOR_USER=condor
+CONDOR_GROUP=condor
+GECOS="Condor Daemons"
+HOME=/var/lib/condor
+
+## arg 1:  the new package version
+pre_install() {
+	#Add condor group if not existed
+	if ! getent passwd $CONDOR_GROUP >/dev/null; then
+	  echo "Creating group: $CONDOR_GROUP"
+	  groupadd --system $CONDOR_GROUP
+	else
+	  echo "WARN: Group $CONDOR_GROUP already exists. Will not create it"
+	fi
+
+	#Add condor user if not existed
+	if ! getent passwd $CONDOR_USER >/dev/null; then
+	  echo "Creating user: $CONDOR_USER"
+	  #useradd --system -g $CONDOR_GROUP --gecos \"$GECOS\" --no-create-home --home $HOME --disabled-password --disabled-login $CONDOR_USER
+	  useradd --system -g $CONDOR_GROUP --no-create-home --home $HOME $CONDOR_USER # --disabled-login --disabled-password
+	else
+	  echo "WARN: The user $CONDOR_USER already exists. Will not create it"
+	fi
+
+}
+
+## arg 1:  the new package version
+post_install() {
+
+	#Install init.d links to default runlevels
+	#update-rc.d condor defaults
+
+	ldconfig
+
+	#Recreate empty dir because it is not part of the package
+	mkdir -p /var/run/condor /var/lock/condor /var/log/condor /var/lib/condor/spool /var/lib/condor/execute
+	chown -R condor:condor /var/run/condor
+	chown -R condor:condor /var/lock/condor
+	chown -R condor:condor /var/log/condor
+	chown -R condor:condor /var/lib/condor
+	chmod 1777 /var/lib/condor/execute
+
+}
+
+## arg 1:  the new package version
+## arg 2:  the old package version
+#pre_upgrade() {
+	# do something here
+#}
+
+## arg 1:  the new package version
+## arg 2:  the old package version
+#post_upgrade() {
+	# do something here
+#}
+
+## arg 1:  the old package version
+pre_remove() {
+
+	# Stop condor service
+	# It will fail if condor is not stopped in time limit
+	if [ -x "/etc/rc.d/condor" ]; then
+    rc.d stop condor
+	fi
+}
+
+## arg 1:  the old package version
+post_remove() {
+
+  ldconfig
+
+	userdel condor
+	#Remove only files for folder that is created as part of package
+	rm -rf /etc/condor/*
+	rm -rf /usr/share/doc/condor/*
+
+	#Remove directories that we create manually        
+	rm -rf /var/run/condor
+	rm -rf /var/lock/condor
+	rm -rf /var/log/condor
+	rm -rf /var/lib/condor
+}
+
+# vim:set ts=2 sw=2 et:

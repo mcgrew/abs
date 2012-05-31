@@ -1,0 +1,25 @@
+pkgname=yuicompressor
+pkgver=2.4.7
+pkgrel=1
+pkgdesc="CSS and Javascript compressor"
+arch=("any")
+url="http://developer.yahoo.com/yui/compressor/"
+license=("BSD")
+depends=("java-runtime") 
+makedepends=()
+options=()
+source=("http://yui.zenfs.com/releases/${pkgname}/${pkgname}-${pkgver}.zip"
+        "yuicompressor")
+sha1sums=('64d209cae769cee2b89217ba226543001c59d27b'
+          'd293f0944d438c300fd9e76f78aa37c5ddde5b8a')
+
+package() {
+  install -D -m644  "${srcdir}/${pkgname}-${pkgver}/build/${pkgname}-${pkgver}.jar" \
+                    "${pkgdir}/usr/share/java/${pkgname}-${pkgver}.jar"
+  install -D -m755  "${srcdir}/${pkgname}" "${pkgdir}/usr/bin/${pkgname}"
+
+  install -D -m644  "${srcdir}/${pkgname}-${pkgver}/LICENSE.TXT" \
+                    "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE.TXT"
+}
+
+# vim:set ts=2 sw=2 et:
