@@ -1,0 +1,37 @@
+# This is an example PKGBUILD file. Use this as a start to creating your own,
+# and remove these comments. For more information, see 'man PKGBUILD'.
+# NOTE: Please fill out the license field for your package! If it is unknown,
+# then please put 'unknown'.
+
+# Maintainer: Your Name <youremail@domain.com>
+pkgname=makepkg32
+pkgver=4.0.3
+pkgrel=2
+epoch=
+pkgdesc="Pacman's makepkg for cross-compiling for i686 on x86_64"
+arch=('x86_64')
+url="http://www.archlinux.org"
+license=('GPL')
+groups=()
+depends=(gcc-multilib binutils-multilib libtool-multilib)
+makedepends=()
+checkdepends=()
+optdepends=()
+provides=()
+conflicts=()
+replaces=()
+backup=()
+options=()
+install=
+changelog=
+source=(makepkg32.conf makepkg32)
+md5sums=('b5447dc462be6ac72214c2a0fabdc7b3'
+         'bd7b06212160ff18250108ab2a9f34e7')
+noextract=()
+
+package() {
+  install -D "$srcdir/makepkg32.conf" "$pkgdir/etc/makepkg32.conf"
+  install -D  "$srcdir/makepkg32" "$pkgdir/usr/bin/makepkg32"
+}
+
+# vim:set ts=2 sw=2 et:

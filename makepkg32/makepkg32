@@ -1,0 +1,4 @@
+#!/bin/sh 
+
+makepkg --config /etc/makepkg32.conf $@
+
