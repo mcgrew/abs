@@ -10,7 +10,7 @@
 
 pkgname=chromium
 pkgver=19.0.1084.52
-pkgrel=2
+pkgrel=102
 pkgdesc="The open-source project behind Google Chrome, an attempt at creating a safer, faster, and more stable browser"
 arch=('i686' 'x86_64')
 url="http://www.chromium.org/"
@@ -41,7 +41,7 @@ sha256sums=('e725d4aa7608c9975b8989188d85d38846956db2f480a1a217bcab06419dab72'
             '478340d5760a9bd6c549e19b1b5d1c5b4933ebf5f8cfb2b3e2d70d07443fe232'
             '4999fded897af692f4974f0a3e3bbb215193519918a1fa9b31ed51e74a2dccb9'
             'f607347ba8477d3c8e60eb3803d26f3c9869f77fd49986c60887c59a6aa7d30d'
-            'fc01ef2dc602f76151ee427db6b7a1e9a26c71e839917bba7253a3b4743f306c'
+            'eb034396f3de748e8ddd3f783bbe8824822cc9927e8cc11782e865e6901a17fd'
             'a700aa054800d1b21d84eaba27c38a703dfa023e9226d11a942690c2a0630aff')
 
 build() {

@@ -1,8 +1,8 @@
 # arg 1:  the new package version
 # arg 2:  the old package version
 
-KERNEL_NAME=-ralus
-KERNEL_VERSION=3.4.2-2-ralus
+KERNEL_NAME=-toshiba
+KERNEL_VERSION=3.4.2-2-toshiba
 
 post_install () {
   # updating module dependencies

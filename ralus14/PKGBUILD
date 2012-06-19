@@ -1,0 +1,29 @@
+
+pkgname=ralus14
+pkgver=14.0.1798
+pkgrel=1
+pkgdesc="Symantec's backup client utility"
+arch=('x86_64')
+license=('custom')
+url=""
+depends=('zlib' 'libstdc++5')
+makedepends=('deb2targz')
+optdepends=()
+source=(VRTSralus-$pkgver-0.x86_64.deb)
+md5sums=('55470d2cb90c00f2cda1d9b2d8442a96')
+
+noextract=(VRTSralus-$pkgver-0.x86_64.deb)
+
+build() {
+	deb2targz.pl VRTSralus-$pkgver-0.x86_64.deb
+	tar -zxf VRTSralus-$pkgver-0.x86_64.tar.gz
+}
+
+package() {
+	cp -r $srcdir/opt $pkgdir/opt
+	cp -r $srcdir/var $pkgdir/var
+	cp -r $srcdir/etc $pkgdir/etc
+	mkdir -p $pkgdir/etc/rc.d
+	cp $srcdir/opt/VRTSralus/bin/VRTSralus.init $pkgdir/etc/rc.d/ralus
+	chmod +x $pkgdir/etc/rc.d/ralus
+}
