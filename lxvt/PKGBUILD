@@ -1,0 +1,39 @@
+# Contributor: tobias <tobias@archlinux.org>
+# Contributor: twm
+# Contributor: Max Pray a.k.a. Synthead <synthead@gmail.com>
+# Maintainer: Thomas McGrew <tjmcgrew@gmail.com>
+
+pkgname=lxvt-git
+_commit=adbd2fefbd
+_nightly=2012.06.26
+_release=0.5.4
+pkgver=${_release}.${_nightly}
+pkgrel=1
+pkgdesc="Lightweight X Virtual Terminal, based on mrxvt"
+arch=('i686' 'x86_64')
+url="http://materm.sourceforge.net"
+license=('GPL')
+depends=('libpng' 'libjpeg' 'libxft' 'libxpm')
+optdepends=('perl: for mrxvtset.pl script')
+replaces=('materm')
+backup=('etc/lxvt/lxvtrc' 'etc/lxvt/submenus.menu' 'etc/lxvt/default.menu')
+source=('lxvt.desktop')
+md5sums=('1341430ab79818900d73a1dac183c313')
+
+build() {
+ cd $srcdir
+ git clone https://github.com/mcgrew/lxvt.git ${pkgname}
+ cd ${pkgname}
+ git checkout ${_commit}
+ touch ChangeLog
+ autoreconf -fi
+ ./configure --prefix=/usr --sysconfdir=/etc --enable-everything \
+   --disable-debug --with-save-lines=2048
+ make
+}
+
+package() {
+ cd "$srcdir/$pkgname"
+ make DESTDIR="$pkgdir" install
+ install -Dm 644 "$srcdir/lxvt.desktop" "$pkgdir/usr/share/applications/lxvt.desktop"
+}
