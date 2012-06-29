@@ -1,0 +1,10 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=lxvt
+Comment=Lightweight X Virtual Terminal
+Exec=lxvt
+Icon=lxvt
+Terminal=false
+Type=Application
+Categories=System;TerminalEmulator;
+GenericName=Terminal
