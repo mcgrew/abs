@@ -1,0 +1,41 @@
+# Contributor: Adam Hani Schakaki <adam@schakaki.net>
+# Maintainer: Ner0
+
+pkgname=muffin-wm
+pkgver=1.0.3_up1
+_pkgver=1.0.3-UP1
+pkgrel=1
+pkgdesc="Cinnamon window manager based on Mutter"
+arch=('i686' 'x86_64')
+url="https://github.com/linuxmint/muffin"
+license=('GPL')
+depends=('clutter' 'gconf' 'gobject-introspection' 'libcanberra' 'libxxf86vm' 'startup-notification' 'zenity')
+makedepends=('libltdl' 'intltool' 'gnome-doc-utils')
+conflicts=('muffin-git')
+options=('!libtool' '!emptydirs')
+install=$pkgname.install
+source=("http://packages.linuxmint.com/pool/main/m/muffin/muffin_$_pkgver.tar.gz")
+md5sums=('944d642744116d16a9b1fdd4fc427cfa')
+
+build() {
+  cd muffin
+
+  CFLAGS="$CFLAGS -Wno-deprecated-declarations"
+  autoreconf -vfi
+  ./configure --prefix=/usr --sysconfdir=/etc \
+              --localstatedir=/var --libexecdir=/usr/lib/muffin \
+              --enable-compile-warnings=yes --disable-static
+  make ${MAKEFLAGS}
+}
+
+package() {
+  cd "$srcdir/muffin"
+  make GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1 DESTDIR="$pkgdir/" install
+
+  install -dm755 "$pkgdir/usr/share/gconf/schemas"
+  gconf-merge-schema "$pkgdir/usr/share/gconf/schemas/muffin.schemas" --domain muffin \
+    "$pkgdir"/etc/gconf/schemas/*.schemas
+  rm -f "$pkgdir"/etc/gconf/schemas/*.schemas
+}
+
+# vim:set ts=2 sw=2 et:

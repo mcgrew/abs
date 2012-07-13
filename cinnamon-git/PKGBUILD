@@ -1,0 +1,65 @@
+# Maintainer: Xiao-Long Chen <chenxiaolong@cxl.epac.to>
+
+pkgname=cinnamon-git
+pkgver=20120629
+pkgrel=1
+pkgdesc="Linux desktop which provides advanced innovative features and a traditional user experience"
+arch=('i686' 'x86_64')
+url="https://github.com/linuxmint/Cinnamon"
+license=('GPL')
+depends=('gnome-menus' 'libpulse' 'gnome-desktop' 'python2' 'gnome-bluetooth' 'gjs' 'libcroco' 'folks' 'telepathy-logger' 'networkmanager' 'caribou' 'nautilus' 'gnome-session' 'muffin-git>=20120507' 'python2-gconf' 'libgnomekbd' 'gnome-menus2')
+makedepends=('git' 'intltool' 'gnome-common')
+provides=('cinnamon')
+conflicts=('cinnamon' 'cinnamon-applets-git' 'cinnamon-applets' 'cinnamon-session-git' 'cinnamon-session' 'cinnamon<20120118')
+options=('!libtool' '!emptydirs')
+install=${pkgname}.install
+source=('0001-cinnamon-settings-hack-by-Ner0.patch')
+sha512sums=('3e701fc288f24753c1d7efd085bf8e8f8d5140da95ef0d2346fc45da84b7a135899ae1fea38fa50e0fbeb40d09624118249e35144ad9597e745a4478efa85fac')
+
+_gitroot='https://github.com/linuxmint/Cinnamon.git'
+_gitname='Cinnamon'
+
+build() {
+  cd "${srcdir}"
+  msg "Connecting to GIT server...."
+
+  if [[ -d "${_gitname}" ]]; then
+    cd "${_gitname}" && git pull origin
+    msg "The local files are updated."
+  else
+    git clone "${_gitroot}" "${_gitname}"
+  fi
+
+  msg "GIT checkout done or server timeout"
+  msg "Starting build..."
+
+  rm -rf "${srcdir}/${_gitname}-build"
+  git clone "${srcdir}/${_gitname}" "${srcdir}/${_gitname}-build"
+  cd "${srcdir}/${_gitname}-build"
+
+  # Hack to make cinnamon-settings work. The proper fix is to install
+  # gnome-settings-daemon-ubuntu
+  if ! pacman -Q gnome-settings-daemon-ubuntu &>/dev/null; then
+    patch -Np1 --no-backup-if-mismatch -i \
+      "${srcdir}/0001-cinnamon-settings-hack-by-Ner0.patch"
+  fi
+
+  ./autogen.sh --prefix=/usr --sysconfdir=/etc --libexecdir=/usr/lib/cinnamon --localstatedir=/var --disable-static --disable-schemas-compile --disable-schemas-install --enable-compile-warnings=yes
+  make ${MAKEFLAGS}
+}
+
+package() {
+  cd "${srcdir}/${_gitname}-build"
+  make DESTDIR="${pkgdir}/" install
+
+  # Python 2 fix
+  sed -i \
+    -e 's|^\(#!.*python\)$|\12|g' \
+    -e '/python[ \t]\+[-a-zA-Z0-9]\+$/ s|^\(#!.*python\)[ \t]*\(.*\)$|\12 \2|g' \
+    "${pkgdir}/usr/bin/cinnamon-extension-tool" \
+    "${pkgdir}/usr/lib/cinnamon-settings/cinnamon-settings.py" \
+    "${pkgdir}/usr/bin/cinnamon-settings" \
+    "${pkgdir}/usr/bin/cinnamon-menu-editor"
+}
+
+# vim:set ts=2 sw=2 et:

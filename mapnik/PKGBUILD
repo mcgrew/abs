@@ -1,0 +1,39 @@
+# Maintainer: AJ Ashton <aj.ashton@gmail.com>
+pkgname=mapnik
+pkgver=2.0.1
+pkgrel=1
+pkgdesc="Free toolkit for developing mapping applications."
+arch=('i686' 'x86_64')
+url="http://mapnik.org"
+license=('LGPL')
+depends=('freetype2' 'libxml2' 'icu' 'boost' 'pycairo' 'cairomm' 'gdal' 'curl')
+makedepends=('git' 'pkgconfig' 'python2')
+source=("https://github.com/downloads/$pkgname/$pkgname/${pkgname}-v${pkgver}.tar.bz2")
+md5sums=('e3dd09991340e2568b99f46bac34b0a8')
+
+build() {
+
+
+  # Patch SConstruct so libs end up in /usr/lib and not in /usr/lib64 on x86_64
+  msg "Fixing LIBDIR_SCHEMA..."
+  cd "$srcdir/$pkgname-v$pkgver"
+  sed -i -e "/LIBDIR_SCHEMA=/s/lib64/lib/" SConstruct
+
+  ## CONFIGURATION OPTIONS
+  ## - Adjust JOBS to 1 per 2GB of available memory for optimal compile time.
+  ## - Set RENDERING_STATS=true for extremely verbose rendering statistics.
+  python2 scons/scons.py configure \
+    JOBS=1 \
+    RENDERING_STATS=false \
+    INPUT_PLUGINS=all \
+    PREFIX=/usr
+
+  python2 scons/scons.py
+}
+
+package() {
+  cd "$srcdir/$pkgname-v$pkgver"
+  python2 scons/scons.py install DESTDIR="$pkgdir" FAST=True
+}
+
+# vim:set ts=2 sw=2 et:
