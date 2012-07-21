@@ -2,7 +2,7 @@
 # arg 2:  the old package version
 
 KERNEL_NAME=-ralus
-KERNEL_VERSION=3.4.4-2-ralus
+KERNEL_VERSION=3.4.4-3-ralus
 
 post_install () {
   # updating module dependencies

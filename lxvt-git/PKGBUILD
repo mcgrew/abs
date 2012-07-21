@@ -4,8 +4,8 @@
 # Maintainer: Thomas McGrew <tjmcgrew@gmail.com>
 
 pkgname=lxvt-git
-_commit=d2caa95
-_nightly=2012.06.28
+_commit=47f2d4a
+_nightly=2012.07.17
 _release=0.5.5
 pkgver=${_release}.${_nightly}
 pkgrel=1

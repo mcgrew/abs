@@ -1,0 +1,33 @@
+# This is an example PKGBUILD file. Use this as a start to creating your own,
+# and remove these comments. For more information, see 'man PKGBUILD'.
+# NOTE: Please fill out the license field for your package! If it is unknown,
+# then please put 'unknown'.
+
+# See http://wiki.archlinux.org/index.php/Python_Package_Guidelines for more
+# information on Python packaging.
+
+# Maintainer: Thomas McGrew <tjmcgrew@gmail.com>
+pkgname=memusage
+pkgver=0.1
+pkgrel=1
+pkgdesc="A python script for determining the memory usage of various programs"
+arch=('any')
+url=""
+license=('GPL')
+groups=()
+depends=('python2')
+makedepends=()
+provides=()
+conflicts=()
+replaces=()
+backup=()
+options=(!emptydirs)
+install=
+source=(memusage)
+md5sums=('65975a8c2240e23676ae60b46cbf1474')
+
+package() {
+  install -D $srcdir/memusage $pkgdir/usr/sbin/memusage
+}
+
+# vim:set ts=2 sw=2 et:
