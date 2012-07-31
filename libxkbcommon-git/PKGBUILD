@@ -1,0 +1,40 @@
+pkgname=libxkbcommon-git
+pkgver=20120724
+pkgrel=1
+pkgdesc="Translating evdev keycodes to keysyms, needed by Wayland."
+url="http://wayland.freedesktop.org/"
+arch=(i686 x86_64)
+license=('custom')
+makedepends=('git' 'xproto' 'kbproto' 'xorg-util-macros')
+provides=('libxkbcommon')
+replaces=('libxkbcommon')
+conflicts=('libxkbcommon')
+
+_gitroot="git://anongit.freedesktop.org/xorg/lib/libxkbcommon"
+_gitname="libxkbcommon"
+
+build() {
+	msg 'Connecting to git.freedesktop.org GIT server....'
+
+	if [ -d ${_gitname} ] ; then
+		cd ${_gitname} && git pull origin master
+	else
+		git clone ${_gitroot} --depth 1
+	fi
+	msg 'GIT checkout done or server timeout'
+	msg 'Starting make...'
+
+	# Cleanup and prepare the build dir
+	rm -rf ${srcdir}/build
+	cp -r ${srcdir}/${_gitname} ${srcdir}/build
+	cd ${srcdir}/build
+
+	./autogen.sh --prefix=/usr
+	make
+}
+
+package() {
+	cd ${srcdir}/build
+
+	make DESTDIR=${pkgdir} install
+}
