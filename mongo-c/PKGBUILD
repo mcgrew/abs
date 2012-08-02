@@ -1,0 +1,30 @@
+# Maintainer: Thomas McGrew <tjmcgrew@gmail.com>
+
+pkgname=mongo-c
+pkgver=0.6
+pkgrel=1
+pkgdesc='The officially supported MongoDB C driver and BSON library.'
+arch=(i686 x86_64)
+url='http://www.mongodb.org/display/DOCS/C+Language+Center'
+optdepends=()
+makedepends=(scons)
+source=("$pkgname.tar.gz::https://github.com/mongodb/mongo-c-driver/tarball/v$pkgver")
+license=(Apache)
+sha256sums=(7c7cf89726fb74d94c8f65722f5f8ccf35ccab2738b95003245d55f1f53d56e9)
+md5sums=('4c12e5c4dd227f25e07cefb23159ede5')
+build() {
+  if [ -d mongodb-mongo-c-driver ]; then
+    rm -rf mongodb-mongo-c-driver
+	fi;
+  mv mongodb-mongo-c-driver-* mongodb-mongo-c-driver
+  scons -C "mongodb-mongo-c-driver" "$MAKEFLAGS"
+}
+
+package() {
+  cd "mongodb-mongo-c-driver"
+  mkdir -p "$pkgdir/usr/lib/"
+  mkdir -p "$pkgdir/usr/include/mongo/"
+  install -m 755 libmongoc.so libbson.so "$pkgdir/usr/lib/"
+  install -m 644 src/*.h "$pkgdir/usr/include/mongo/"
+}
+

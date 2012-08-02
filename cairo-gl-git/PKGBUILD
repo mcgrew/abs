@@ -4,7 +4,7 @@
 # Contributor: Disfido <disfido@gmail.com>
 
 pkgname=cairo-gl-git
-pkgver=20120725
+pkgver=20120731
 _realver=1.10.2
 pkgrel=1
 pkgdesc="Cairo vector graphics library with GL and EGL enabled"

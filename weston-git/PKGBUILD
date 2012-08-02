@@ -1,5 +1,5 @@
 pkgname=weston-git
-pkgver=20120725
+pkgver=20120731
 pkgrel=1
 pkgdesc="A modern display server."
 arch=(i686 x86_64)
@@ -36,8 +36,6 @@ package() {
 	cd ${srcdir}/$_gitname-build
 	make DESTDIR="${pkgdir}" install
 	install -m 755 -D src/weston "${pkgdir}/usr/bin/weston"
-	chmod o+s "${pkgdir}/usr/bin/weston"
-
 	install -m 755 -D clients/clickdot "${pkgdir}/usr/bin/weston-clickdot"
 	install -m 755 -D clients/dnd "${pkgdir}/usr/bin/weston-dnd"
 	install -m 755 -D clients/editor "${pkgdir}/usr/bin/weston-editor"
@@ -57,4 +55,6 @@ package() {
 	install -m 755 -D clients/weston-screenshooter "${pkgdir}/usr/bin/weston-screenshooter"
 	install -m 755 -D clients/weston-tablet-shell "${pkgdir}/usr/bin/weston-tablet-shell"
 	install -m 755 -D clients/weston-terminal "${pkgdir}/usr/bin/weston-terminal"
+	chmod u+s "${pkgdir}/usr/bin/weston"
+	chmod u+s "${pkgdir}/usr/bin/weston-launch"
 }

@@ -1,5 +1,5 @@
 pkgname=wayland-git
-pkgver=20120725
+pkgver=20120731
 pkgrel=1
 pkgdesc="A modern display server."
 arch=(i686 x86_64)

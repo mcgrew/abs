@@ -2,7 +2,7 @@
 
 pkgname=pixman-git
 _realname=pixman
-pkgver=20120725
+pkgver=20120731
 pkgrel=1
 pkgdesc="Pixman library"
 license="GPL"
