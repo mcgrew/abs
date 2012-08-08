@@ -1,0 +1,12 @@
+diff --git a/net/core/dev.c b/net/core/dev.c
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -5182,7 +5182,7 @@ int dev_ioctl(struct net *net, unsigned int cmd, void __user *arg)
+ 		/* Take care of Wireless Extensions */
+ 		if (cmd >= SIOCIWFIRST && cmd <= SIOCIWLAST)
+ 			return wext_handle_ioctl(net, &ifr, cmd, arg);
+-		return -ENOTTY;
++		return -EINVAL;
+ 	}
+ }
+ 

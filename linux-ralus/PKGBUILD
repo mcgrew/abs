@@ -3,11 +3,11 @@
 # Maintainer: Thomas Baechler <thomas@archlinux.org>
 
 #pkgname=('linux' 'linux-headers' 'linux-docs') # Build stock -ARCH kernel
-pkgname=linux-ralus       # Build kernel with a different name
+pkgname=(linux-ralus linux-ralus-headers)       # Build kernel with a different name
 _kernelname=${pkgname#linux}
 _basekernel=3.4
-pkgver=${_basekernel}.4
-pkgrel=3
+pkgver=${_basekernel}.7
+pkgrel=1
 arch=('i686' 'x86_64')
 url="http://www.kernel.org/"
 license=('GPL2')
@@ -19,21 +19,11 @@ source=("http://www.kernel.org/pub/linux/kernel/v3.x/linux-${_basekernel}.tar.xz
         'config' 'config.x86_64'
         # standard config files for mkinitcpio ramdisk
         "${pkgname}.preset"
-        "linux-$pkgver-ralus.patch"
+        "linux-ralus.patch"
         'fix-acerhdf-1810T-bios.patch'
         'change-default-console-loglevel.patch'
         'i915-fix-ghost-tv-output.patch'
 	'3.4.4-fix-backlight-regression.patch')
-md5sums=('967f72983655e2479f951195953e8480'
-         '58e6672d932d74d5e2b6811b9d37d67c'
-         '3f2c307c8ffae67f60c13ef69af8364a'
-         '18d9d09152bafffaef78f2aac07e7145'
-         '6f2696ebc25f835a1f1943ab75d3a03d'
-         '212129cc0290f91aa05251c08504f512'
-         '38c1fd4a1f303f1f6c38e7f082727e2f'
-         '9d3c56a4b999c8bfbd4018089a62f662'
-         '263725f20c0b9eb9c353040792d644e5'
-	 '80a46681386bb87813989faeb92bdd9a')
 
 build() {
   cd "${srcdir}/linux-${_basekernel}"
@@ -68,7 +58,7 @@ build() {
   patch -Np1 -i "${srcdir}/change-default-console-loglevel.patch"
 
 	# patch for compatibility with Symantec Remote Backup Agent
-  patch -Np1 -i "${srcdir}/linux-$pkgver-ralus.patch"
+  patch -Np1 -i "${srcdir}/linux-ralus.patch"
 
   if [ "${CARCH}" = "x86_64" ]; then
     cat "${srcdir}/config.x86_64" > ./.config
@@ -161,9 +151,15 @@ package_linux-ralus() {
   # add real version for building modules and running depmod from post_install/upgrade
   mkdir -p "${pkgdir}/lib/modules/extramodules-${_basekernel}${_kernelname:--ARCH}"
   echo "${_kernver}" > "${pkgdir}/lib/modules/extramodules-${_basekernel}${_kernelname:--ARCH}/version"
+
+  # move module tree /lib -> /usr/lib
+  mv "$pkgdir/lib" "$pkgdir/usr"
+
+  # Now we call depmod...
+  depmod -b "$pkgdir" -F System.map "$_kernver"
 }
 
-package_linux-headers() {
+package_linux-ralus-headers() {
   pkgdesc="Header files and scripts for building modules for linux kernel"
 #  provides=('kernel26-headers')
 #  conflicts=('kernel26-headers')
@@ -310,3 +306,13 @@ package_linux-docs() {
   # remove a file already in linux package
   rm -f "${pkgdir}/usr/src/linux-${_kernver}/Documentation/DocBook/Makefile"
 }
+md5sums=('967f72983655e2479f951195953e8480'
+         '5258bea05aa6d0a52fcaea28b1b74c29'
+         '3f2c307c8ffae67f60c13ef69af8364a'
+         '18d9d09152bafffaef78f2aac07e7145'
+         '6f2696ebc25f835a1f1943ab75d3a03d'
+         '6af18857fbd0474c130e9dca6e6b2085'
+         '38c1fd4a1f303f1f6c38e7f082727e2f'
+         '9d3c56a4b999c8bfbd4018089a62f662'
+         '263725f20c0b9eb9c353040792d644e5'
+         '80a46681386bb87813989faeb92bdd9a')
